@@ -9,7 +9,7 @@ else
 fi
 
 if [[ -f $file ]]; then
-    read -n1 -p "File already exists! Overwrite? (y/n)" overwrite
+    read -s -n1 -p "File already exists! Overwrite? (y/n)" overwrite
     echo
     if [[ $overwrite = "y" ]]; then
         echo "Overwriting."
