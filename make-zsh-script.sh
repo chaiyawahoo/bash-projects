@@ -1,19 +1,16 @@
 #!/bin/zsh
-forced=
+forced=0
 file=
 ext=
 opts=0
 
 if  [[ $1 = "-f" || "--forced" ]]; then
     forced=1
-    opts=$((opts + 1))
-else
-    forced=0
+    ((opts++)
 fi
 
 file=$(echo $@ | cut -d " " -f $(( 1 + opts )))
 ext=$(echo $file | awk -F '.' '{print $NF}')
-# words=$(echo $@ | wc - w)
 
 if [[ $ext != "sh" ]]; then
     file=$file".sh"
