@@ -21,8 +21,6 @@ if [[ $ext != "sh" ]]; then
     file=$file".sh"
 fi
 
-echo $forced
-
 if [[ -f $file && $forced = 0 ]]; then
     read -q "?File already exists! Overwrite? (y/n)" overwrite
     echo
