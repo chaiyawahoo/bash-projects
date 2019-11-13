@@ -4,19 +4,26 @@ file=
 ext=
 opts=0
 
-if  [[ $1 = "-f" || "--forced" ]]; then
+if  [[ $1 = "-f" || $1 = "--forced" ]]; then
     forced=1
-    ((opts++)
+    ((opts++))
 fi
 
 file=$(echo $@ | cut -d " " -f $(( 1 + opts )))
 ext=$(echo $file | awk -F '.' '{print $NF}')
 
+if [[ -z $file ]]; then
+    echo "Must supply file name!"
+    exit 1
+fi
+
 if [[ $ext != "sh" ]]; then
     file=$file".sh"
 fi
 
-if [[ -f $file && forced = 0 ]]; then
+echo $forced
+
+if [[ -f $file && $forced = 0 ]]; then
     read -q "?File already exists! Overwrite? (y/n)" overwrite
     echo
     if [[ $overwrite = "y" ]]; then
