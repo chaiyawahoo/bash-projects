@@ -1,39 +1,38 @@
 #!/bin/zsh
-forced=0
-file=
-ext=
-opts=0
-
-if  [[ $1 = "-f" || $1 = "--forced" ]]; then
-    forced=1
-    ((opts++))
-fi
-
-file=$(echo $@ | cut -d " " -f $(( 1 + opts )))
+forced=false
+file=$(echo $@ | cut -d ' ' -f $# 2>/dev/null)
 ext=$(echo $file | awk -F '.' '{print $NF}')
 
+if [[ $# > 1 ]]; then
+    for option in $(printf '%s\n' $@ | sed -n '/^-/p'); do
+        if  [[ $option = '-f' || $option = '--forced' ]]; then
+            forced=true
+        else
+            echo $option 'is not an option!' >&2
+            exit 1
+        fi
+    done
+fi
+
 if [[ -z $file ]]; then
-    echo "Must supply file name!"
+    echo 'Must supply file name!' >&2
     exit 1
 fi
 
-if [[ $ext != "sh" ]]; then
-    file=$file".sh"
+if [[ $ext != 'sh' ]]; then
+    file=$file'.sh'
 fi
 
-if [[ -f $file && $forced = 0 ]]; then
-    read -q "?File already exists! Overwrite? (y/n)" overwrite
+if [[ -f $file && $forced = false ]]; then
+    read -q -s '?File already exists! Overwrite? (y/n)' overwrite
     echo
-    if [[ $overwrite = "y" ]]; then
-        echo "Overwriting."
-    elif [[ $overwrite = "n" ]]; then
-        echo "Qutting."
-        exit 0
+    if [[ $overwrite = 'y' ]]; then
+        echo 'Overwriting.'
     else
-        echo "Invalid input '$overwrite'. Quitting." >&2
-        exit 1
+        echo 'Quitting.'
+        exit 0
     fi
 fi
 
-echo "#!/bin/zsh" > $file
+echo '#!/bin/zsh' > $file
 chmod +x $file
